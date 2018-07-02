@@ -2,16 +2,28 @@
 
 In this code pattern, we'll provide a method to deploy a LoRaWAN based network of sensors, and publish the sensor values to the Watson IoT Platform.
 
-LoRaWAN is a wireless communication protocol designed for the Internet of Things. This protocol is desirable for IoT solutions because it has a long range (up to 10km in optimal conditions) and requires a minimal amount of battery power.
+LoRaWAN is a wireless communication protocol designed for the Internet of Things. This protocol is desirable for IoT solutions because it has a long range (up to 10km in optimal conditions) and requires a minimal amount of battery power. This longer range allows for the deployment of larger scale projects, such as smart parking structures, agricultural monitoring, tracking weather conditions, asset tracking, etc.
 
-Each network consists of a "gateway", and one or more "nodes". This network uses a star based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to a IoT platform for further processing
+Each LoRa network consists of a "gateway", and one or more "nodes". This network uses a star based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to a IoT platform for further processing.
 
-When the reader has completed this code pattern, they will understand how to
+This code pattern is the first in a series of three, focusing on LoRaWAN and "Smart Cities". To complete this pattern, several pieces of hardware will need to be acquired which are listed below in the [prerequisites](#hardware) section.
+<!-- 1. Assemble hardware and configure software to create a LoRaWAN based gateway, which can wirelessly receive sensor data from one or more end nodes. This gateway can forward data to
+2.
+3. -->
+When the reader has completed this pattern series, they will understand how to
 <!-- - Choose the best protocol for their IoT solution -->
-- Configure a Raspberry Pi to serve as a LoRaWAN gateway
-- Determine which sensors are best for their IoT setup
-- Install LoRaWAN firmware on a microcontroller (Using Adafruit LoRa "feather" for this example)
-- Publish LoRaWan packets to Watson IoT Platform
+- Assemble a Raspberry Pi with additional hardware to serve as a LoRaWAN gateway
+- Determine which sensors are best for their IoT / Smart City setup
+- Configure a microcontroller with LoRaWAN support. In this case, the microcontroller is a piece of hardware responsible for harvesting data from connected sensors, and wirelessly transmitting the collected data to the gateway via LoRa packets. We'll be using the [Adafruit LoRa "feather"](https://www.adafruit.com/product/3178) as the microcontroller in this series, but there are alternative boards such as the [Arduino Uno](https://store.arduino.cc/usa/arduino-uno-rev3) or the [MakerFocus LoRa board](https://www.amazon.com/gp/product/B076MSLFC9/ref=as_li_ss_tl?ie=UTF8&psc=1&linkCode=sl1&tag=periodictips-20&linkId=bba60e03c7e6a882c131dc2d3d7257d3).
+- Forward LoRaWan packets from the gateway to the Watson IoT Platform
+- Visualize data in Watson IoT Platform and/or a React Web Application
+- Persist sensor data in a database
+- Feed data into analytical / predictive algorithms
+
+# Architecture
+<p align="center">
+<img src="https://i.imgur.com/GhL8sgD.png"  />
+</p>
 
 # Flow
 1. LoRaWAN end nodes power on, sample values from sensors, and send data to Gateway. This process is repeated at a interval set by the user
@@ -20,7 +32,7 @@ When the reader has completed this code pattern, they will understand how to
 
 3. Gateway publishes JSON sensor values to Watson IoT platform
 
-4. Watson IoT platform logs all incoming values in Cloudant Database
+4. Watson IoT platform logs received values in a Cloudant Database
 
 # Prerequisites
 
@@ -46,7 +58,8 @@ Gateway:
 - [Female Header pins](https://www.adafruit.com/product/598?gclid=EAIaIQobChMIz4GZgKv02wIVgr9kCh1WIghjEAQYBCABEgLfXPD_BwE)
 
 End Node:
-- [LoRA Feather](https://www.adafruit.com/product/3078)
+- [LoRA Feather (Microcontroller)](https://www.adafruit.com/product/3078)
+- [Solderless Breadboard](https://www.sparkfun.com/products/12043)
 - [2500mAh Lithium Batteries](https://www.adafruit.com/product/258)
 - [Sensors](https://www.sparkfun.com/products/12862) (choose depending on your use case)
 
@@ -212,8 +225,7 @@ Next, enter "Adafruit SAMD" in the search bar, and then select the package title
 
 Close and re-open the Arduino application.
 
-2.
-Next we'll need to download the [LMIC (LoraMAC-in-C) library](https://github.com/matthijskooijman/arduino-lmic) and edit the included configuration file.
+2. Next we'll need to download the [LMIC (LoraMAC-in-C) library](https://github.com/matthijskooijman/arduino-lmic) and edit the included configuration file.
 
 Download the `arduino-lmic` library with the following command
 ```
@@ -381,7 +393,7 @@ npm install -g mqtt
 npm ttn-to-watson.js
 ```
 
-Each individual sensor reading will be published to the Watson IoT Platform as a JSON object. In our case, we used the following format
+Each individual sensor reading will be published to the Watson IoT Platform as a JSON object. In our case, each of our messages take the following format
 ```
 {
   "d": {
@@ -416,6 +428,10 @@ Once that form has been filled out, we can view the archived data by clicking th
 Additional information and troubleshooting steps for the Adafruit feather can be found on the official site [here](https://learn.adafruit.com/adafruit-feather-m0-basic-proto/using-with-arduino-ide)
 
 # Links
+
+- [Use Cases](https://www.thethingsnetwork.org/forum/c/use-cases)
+- [Adafruit Feather Docs](https://learn.adafruit.com/assets/46254)
+- [LoRaWAN White paper](https://arxiv.org/pdf/1706.03086.pdf)
 
 <!-- pick the relevant ones from below -->
 # Learn more
