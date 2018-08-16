@@ -1,7 +1,5 @@
 # Create a LoRaWAN based Smart City network
 
-In this code pattern, we'll provide a method to deploy a LoRaWAN based network of sensors, and publish the sensor values to the Watson IoT Platform.
-
 LoRaWAN is a wireless communication protocol designed for the Internet of Things. This protocol is desirable for IoT solutions because it has a long range (up to 10km in optimal conditions) and requires a minimal amount of battery power. This longer range allows for the deployment of larger scale projects, such as smart parking structures, agricultural monitoring, tracking weather conditions, asset tracking, etc.
 
 Each LoRa network consists of a "gateway", and one or more "nodes". This network uses a star based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to a IoT platform for further processing.
@@ -32,7 +30,7 @@ When the reader has completed this pattern series, they will understand how to
 
 3. Gateway publishes JSON sensor values to Watson IoT platform
 
-4. Watson IoT platform logs received values in a Cloudant Database
+4. Watson IoT platform persists sensor values in a Cloudant Database
 
 # Prerequisites
 
@@ -63,20 +61,12 @@ End Node:
 - [2500mAh Lithium Batteries](https://www.adafruit.com/product/258)
 - [Sensors](https://www.sparkfun.com/products/12862) (choose depending on your use case)
 
-## Included components
-* [Watson IoT Platform](https://console.bluemix.net/catalog/services/internet-of-things-platform/)
-* [Cloudant](https://console.bluemix.net/catalog/services/cloudant)
-
-## Featured technologies
-<!-- Select components from [here](https://github.ibm.com/developer-journeys/journey-docs/tree/master/_content/dev#technologies), copy and paste the raw text for ease -->
-* [Node.js](https://nodejs.org/en/)
-* [MQTT.js](https://www.npmjs.com/package/mqtt)
-
 # Steps:
+<!-- #### Hardware -->
 
-## Gateway
+## Set up the Raspberry Pi Gateway and install software dependencies
 
-#### Hardware
+**Gateway Hardware**
 We'll begin setting up the Gateway by connecting the Raspberry Pi GPIO to the pins on the LoRa concentrator module. This can be done two ways:
 One method is to connect standard female jumper wires as seen in the diagram below.
 <p align="center">
@@ -101,14 +91,14 @@ Next, place the gateway shield on top of the concentrator module so the pins are
 
 Now, place the headers on top of the Raspberry Pi like so
 <p align="center">
-<img src="https://i.imgur.com/Kb3xsGd.jpg"  />
+<img src="https://i.imgur.com/Kb3xsGd.jpg" />
 </p>
 <p align="center">
 *side view*
 </p>
 
 <p align="center">
-<img src="https://i.imgur.com/ziBL0VP.jpg"  />
+<img src="https://i.imgur.com/ziBL0VP.jpg" />
 </p>
 <p align="center">
 *top view*
@@ -116,7 +106,8 @@ Now, place the headers on top of the Raspberry Pi like so
 
 At this point, confirm that all connections are secure, and then plug in a micro USB cable to provide power to your Raspberry Pi. Lights on the Raspberry Pi and the LoRa concentrator should power on.
 
-#### Software
+**Gateway Software**
+
 Connect to your Raspberry Pi via SSH or directly with a USB keyboard
 
 Next install git, if you haven't already
@@ -135,7 +126,7 @@ cd packet_forwarder
 ./compile.sh
 ```
 
-Next, follow this [link](https://console.thethingsnetwork.org/) to create a free account on The Things Network (TTN), which is a open LoRa network provider.
+<!-- Next, follow this [link](https://console.thethingsnetwork.org/) to create a free account on The Things Network (TTN), which is a open LoRa network provider.
 Click the "Gateways" button, and then "Register gateway"
 <p align="center">
 <img src="https://i.imgur.com/KiNIt0H.jpg"  />
@@ -144,6 +135,21 @@ Click the "Gateways" button, and then "Register gateway"
 Enter an ID and frequency plan. The frequency plan varies by country. We'll be using the US frequency of 915MHz.
 <p align="center">
 <img src="https://i.imgur.com/WnsKrmg.jpg"  />
+</p> -->
+
+## Create an account on The Things Network (TTN) and register the gateway.
+
+Create a free account on The Things Network console at [https://console.thethingsnetwork.org/
+ at [https://console.thethingsnetwork.org/](https://console.thethingsnetwork.org/) and creating a free account.
+
+Next, log in and navigate to the "Gateways" section. Next, click the "Register Gateway" link.
+<p align="center">
+<img src="https://i.imgur.com/uLxNGQx.png"  />
+</p>
+
+Then, fill out the required information, a unique gateway ID and a frequency plan. The frequency plan differs by country. Since we're in the US, we'll select 915MHz
+<p align="center">
+<img src="https://i.imgur.com/liaSPAW.png"  />
 </p>
 
 After submitting the form, we'll be able to see a set of credentials, which consist of an ID and Key. The Key can be copied to your clipboard using the icon circled below.
@@ -156,18 +162,42 @@ These credentials will then need to be placed in a YAML file on the Raspberry Pi
 <img src="https://i.imgur.com/FSLzNyc.jpg"  />
 </p>
 
-Once these credentials have been placed in our configuration file, we can run the packet_forwarder binary with the command
-```
-/home/pi/packet_forwarder/bin/packet-forwarder start --reset-pin 7 --config "/home/pi/.pktfwd.yml"
-```
 If successful, this should print the following output
 <p align="center">
 <img src="https://i.imgur.com/cxh0keH.jpg"  />
 </p>
 
-## End Node
+## Create an application and a device in The Things Network console
 
-#### Hardware
+ The End node arduino-lmic library requires a set of credentials (Network Session Key and App Session Key) to authenticate each device. These credentials can be generated by going back to The Things Network console. After logging in click on the "Applications" menu selection. Then, click "Add Application".
+
+ <p align="center">
+ <img src="https://i.imgur.com/7VntwXU.png"  />
+ </p>
+
+ Here we'll need to provide an Application ID to the form, and then click the "Add Application" button.
+ <p align="center">
+ <img src="https://i.imgur.com/khMwEuf.png"  />
+ </p>
+
+ Each Application can have one or more associated end nodes, referred to here as "Devices". Navigate to your newly created application, and c,lick "Register Device"
+ <p align="center">
+ <img src="https://i.imgur.com/xlCRy1T.png"  />
+ </p>
+
+ Provide a name as a Device ID, click the icon circled below to randomly generate a Device EUI and then click "Register"
+ <p align="center">
+ <img src="https://i.imgur.com/OVxp7MI.png"  />
+ </p>
+
+ Click the generated device. This view displays the Network Session Key and App Session Key, which we'll need in the next step.
+ <p align="center">
+ <img src="https://i.imgur.com/QVtLd26.png"  />
+ </p>
+
+## Set up the Adafruit LoRa Feature M0 as the end point and install software dependencies
+
+**End Node Hardware**
 We can continue on by setting up a end node, which is responsible for reading sensor data and forwarding the packaged data to the gateway.
 
 In this context, each end node consists of a microprocessor, a LoRa radio, an antenna, and one or more sensors.
@@ -189,11 +219,10 @@ Next, solder a different wire to the joint labeled "dio2", and connect the other
 
 Once this is complete, connect a micro-usb cable from our laptop to the LoRa feather node to supply power.
 
-#### Software
-
+**End Node Software**
 Now we'll need to carry out a few more configuration steps to allow our node to send data to the gateway
 
-1. Install and configure the Arduino IDE
+- Install and configure the Arduino IDE
 
 Begin by visiting the following link on the Arduino web [here](https://www.arduino.cc/en/Main/Software?), scroll down to the "Download the Arduino IDE", and click the corresponding link for your operating system. Unzip the downloaded archive file, and open the resulting "Arduino" application.
 
@@ -204,7 +233,7 @@ Next, open the "Preferences" menu.
 
 We'll need to add support to the Arduino IDE for the Adafruit LoRa feather by adding this url https://adafruit.github.io/arduino-board-index/package_adafruit_index.json to the "Additional Boards Manager URLs" section
 <p align="center">
-<img src="https://i.imgur.com/XJtG9jP.png"  />
+<img src="https://i.imgur.com/XJtG9jP.png" style="width:400px;height:300px;" />
 </p>
 
 <!-- TODO, clean up this sentence -->
@@ -225,7 +254,7 @@ Next, enter "Adafruit SAMD" in the search bar, and then select the package title
 
 Close and re-open the Arduino application.
 
-2. Next we'll need to download the [LMIC (LoraMAC-in-C) library](https://github.com/matthijskooijman/arduino-lmic) and edit the included configuration file.
+- Next we'll need to download the [LMIC (LoraMAC-in-C) library](https://github.com/matthijskooijman/arduino-lmic) and edit the included configuration file.
 
 Download the `arduino-lmic` library with the following command
 ```
@@ -237,7 +266,7 @@ git clone https://github.com/matthijskooijman/arduino-lmic
 <img src="https://i.imgur.com/fzq4Aw2.png"  />
 </p>
 
-3. Use the Arduino IDE to flash the LMIC library onto the node
+- Use the Arduino IDE to flash the LMIC library onto the node
 
 Install the `arduino-lmic` library by navigating to the "Sketch" menu, hover over the "Include Library" selection, and then click "Add .zip library".
 <p align="center">
@@ -250,34 +279,7 @@ Select the cloned `arduino-lmic` folder and then click the "Choose" button
 </p>
 
 
-4. Create a Application and Device in "The Things Network" console
-
-The arduino-lmic library requires a set of credentials (Network Session Key and App Session Key) to authenticate each device. These credentials can be generated by going back to The Things Network console and clicking on the "Applications" menu selection. Then, click "Add Application".
-<p align="center">
-<img src="https://i.imgur.com/7VntwXU.png"  />
-</p>
-
-Here we'll need to provide an Application ID to the form, and then click the "Add Application" button.
-<p align="center">
-<img src="https://i.imgur.com/khMwEuf.png"  />
-</p>
-
-Each Application can have one or more associated end nodes, referred to here as "Devices". Navigate to your newly created application, and c,lick "Register Device"
-<p align="center">
-<img src="https://i.imgur.com/xlCRy1T.png"  />
-</p>
-
-Provide a name as a Device ID, click the icon circled below to randomly generate a Device EUI and then click "Register"
-<p align="center">
-<img src="https://i.imgur.com/OVxp7MI.png"  />
-</p>
-
-Click the generated device. This view displays the Network Session Key and App Session Key, which we'll need in the next step.
-<p align="center">
-<img src="https://i.imgur.com/QVtLd26.png"  />
-</p>
-
-5. Next, we'll need to take the Device credentials (Network Session Key and App Session Key) and place them into a Arduino "sketch". A sketch is a C code snippet that runs in a loop on the node. This snippet defines node behavior, and can place the node in "deep sleep" mode at a given interval, define input/output pins to read and write to sensors, listen for updates from the gateway, etc.
+- Next, we'll need to take the Device credentials (Network Session Key and App Session Key) and place them into a Arduino "sketch". A sketch is a C code snippet that runs in a loop on the node. This snippet defines node behavior, and can place the node in "deep sleep" mode at a given interval, define input/output pins to read and write to sensors, listen for updates from the gateway, etc.
 
 In this example, we'll use the sketch included in our cloned arduino-lmic repository at `arduino-lmic/examples/ttn-abp/ttn-abp.ino`. This sketch repeatedly transmits a string "Hello World" to a nearby LoRa gateway. The Network Session key should be inserted as a value to the NWSKEY variable, and the Application Key set as the APPSKEY variable, as seen below
 <p align="center">
@@ -295,7 +297,9 @@ const lmic_pinmap lmic_pins = {
 };
 ```
 
-6. Now, we can test that everything has been set up properly by sending a "Hello World" string from our LoRa node to our gateway. Upload the updated "sketch" to the node by clicking the button in the upper section of the Arduino IDE. Once successfully uploaded, this snippet will repeatedly run in a loop.
+## Parse the sensor data values and publish them to the Watson IoT Platform
+
+Now, we can test that everything has been set up properly by sending a "Hello World" string from our LoRa node to our gateway. Upload the updated "sketch" to the node by clicking the button in the upper section of the Arduino IDE. Once successfully uploaded, this snippet will repeatedly run in a loop.
 
 <p align="center">
 <img src="https://i.imgur.com/GcLb6Jy.png"  />
@@ -310,8 +314,6 @@ We can view the original payload by using the standard "Buffer" library in node.
 <p align="center">
 <img src="https://i.imgur.com/Kn483SZ.png"  />
 </p>
-
-7. Publish sensor values from end node to TTN
 
 Now that we've verified that a basic "Hello world" string can be published from our node to the gateway, let's update our node to read and publish values from a sensor. To do this, we can plug a sensor into the breadboard, connect its negative/positive pins to the breadboard power rails, and its data pin to one of the feather “Analog input” pins (6 in total labeled like A0, A1, etc). In this example, I’ll use a sound sensor.
 
@@ -343,7 +345,8 @@ After flashing the updated sketch to the board, we can see a different set of in
 <img src="https://i.imgur.com/JCX1Qbk.png"  />
 </p>
 
-7. Forward sensor values into Watson IoT Platform
+#### Parse the sensor data values and publish them to the Watson IoT Platform.
+<!-- #### Forward sensor values from The Things Network (TTN) to Watson IoT platform. -->
 
 Now that we can publish and receive sensor data from the TTN service, our final portion of this pattern shows how to parse the sensor values and publish them to the Watson IoT Platform
 
