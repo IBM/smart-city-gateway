@@ -4,7 +4,7 @@ LoRaWAN is a wireless communication protocol designed for the Internet of Things
 
 Each LoRa network consists of a "gateway", and one or more "nodes". This network uses a star based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to a IoT platform for further processing.
 
-This code pattern is the first in a series of three, focusing on LoRaWAN and "Smart Cities". To complete this pattern, several pieces of hardware will need to be acquired which are listed below in the [prerequisites](#hardware) section.
+To set up this project, several pieces of hardware will need to be acquired which are listed below in the [prerequisites](#hardware) section.
 <!-- 1. Assemble hardware and configure software to create a LoRaWAN based gateway, which can wirelessly receive sensor data from one or more end nodes. This gateway can forward data to
 2.
 3. -->
@@ -20,17 +20,21 @@ When the reader has completed this pattern series, they will understand how to
 
 # Architecture
 <p align="center">
-<img src="https://i.imgur.com/GhL8sgD.png"  />
+<img src="https://i.imgur.com/Zu8113o.png"  />
 </p>
 
 # Flow
 1. LoRaWAN end nodes power on, sample values from sensors, and send data to Gateway. This process is repeated at a interval set by the user
 
-2. Gateway receives LoRa packets, parses binary data as JSON object
+2. Gateway receives LoRa packets, and forwards packets up to "The Things Network" (TTN)
 
-3. Gateway publishes JSON sensor values to Watson IoT platform
+3. TTN processes LoRa packets and confirms packets came from an authenticated device
 
-4. Watson IoT platform persists sensor values in a Cloudant Database
+4. Gateway receives JSON object containing LoRa payload from to TTN MQTT broker
+
+4. Gateway decodes LoRa payload (base64 to integer/plaintext) and publishes an updated JSON object to Watson IoT platform
+
+5. Watson IoT platform receives JSON, updates dashboard and persists sensor values in a Cloudant Database
 
 # Prerequisites
 
@@ -126,15 +130,17 @@ cd packet_forwarder
 ./compile.sh
 ```
 
-<!-- Next, follow this [link](https://console.thethingsnetwork.org/) to create a free account on The Things Network (TTN), which is a open LoRa network provider.
-Click the "Gateways" button, and then "Register gateway"
-<p align="center">
-<img src="https://i.imgur.com/KiNIt0H.jpg"  />
-</p>
+<!-- ## Configure the LoRa Packet Forwarder service
+Once the gateway software and hardware dependencies are set up, we can continue on by configuring and starting our "packet forwarder" service. This service connects to the LoRa concentrator module and listens for incoming LoRa packets. As incoming LoRa payloads are received, they are then forwarded by the service to a specified port as UDP datagrams.
 
-Enter an ID and frequency plan. The frequency plan varies by country. We'll be using the US frequency of 915MHz.
+To configure the service, we'll simply need to navigate to the `lora_pkt_fwd` directory
+```
+cd lora_pkt_fwd
+```
+
+Next, we'll need to update a few values in the `global_conf.json` file.
 <p align="center">
-<img src="https://i.imgur.com/WnsKrmg.jpg"  />
+<img src="https://i.imgur.com/eK3VG2w.png"  />
 </p> -->
 
 ## Create an account on The Things Network (TTN) and register the gateway.
@@ -223,6 +229,7 @@ Next, solder a different wire to the joint labeled "dio2", and connect the other
 Once this is complete, connect a micro-usb cable from our laptop to the LoRa feather node to supply power.
 
 **End Node Software**
+
 Now we'll need to carry out a few more configuration steps to allow our node to send data to the gateway
 
 Install and configure the Arduino IDE
