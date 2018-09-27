@@ -8,22 +8,13 @@ To set up this project, several pieces of hardware will need to be acquired whic
 <!-- 1. Assemble hardware and configure software to create a LoRaWAN based gateway, which can wirelessly receive sensor data from one or more end nodes. This gateway can forward data to
 2.
 3. -->
-When the reader has completed this pattern series, they will understand how to
-<!-- - Choose the best protocol for their IoT solution -->
-- Assemble a Raspberry Pi with additional hardware to serve as a LoRaWAN gateway
-- Determine which sensors are best for their IoT / Smart City setup
-- Configure a microcontroller with LoRaWAN support. In this case, the microcontroller is a piece of hardware responsible for harvesting data from connected sensors, and wirelessly transmitting the collected data to the gateway via LoRa packets. We'll be using the [Adafruit LoRa "feather"](https://www.adafruit.com/product/3178) as the microcontroller in this series, but there are alternative boards such as the [Arduino Uno](https://store.arduino.cc/usa/arduino-uno-rev3) or the [MakerFocus LoRa board](https://www.amazon.com/gp/product/B076MSLFC9/ref=as_li_ss_tl?ie=UTF8&psc=1&linkCode=sl1&tag=periodictips-20&linkId=bba60e03c7e6a882c131dc2d3d7257d3).
-- Forward LoRaWan packets from the gateway to the Watson IoT Platform
-- Visualize data in Watson IoT Platform and/or a React Web Application
-- Persist sensor data in a database
-- Feed data into analytical / predictive algorithms
 
 # Architecture
 <p align="center">
 <img src="https://i.imgur.com/Zu8113o.png"  />
 </p>
 
-# Flow
+<!-- # Flow
 1. LoRaWAN end nodes power on, sample values from sensors, and send data to Gateway. This process is repeated at a interval set by the user
 
 2. Gateway receives LoRa packets, and forwards packets up to "The Things Network" (TTN)
@@ -34,7 +25,7 @@ When the reader has completed this pattern series, they will understand how to
 
 4. Gateway decodes LoRa payload (base64 to integer/plaintext) and publishes an updated JSON object to Watson IoT platform
 
-5. Watson IoT platform receives JSON, updates dashboard and persists sensor values in a Cloudant Database
+5. Watson IoT platform receives JSON, updates dashboard and persists sensor values in a Cloudant Database -->
 
 # Prerequisites
 
@@ -439,16 +430,6 @@ Once that form has been filled out, we can view the archived data by clicking th
 # Troubleshooting
 
 Additional information and troubleshooting steps for the Adafruit feather can be found on the official site [here](https://learn.adafruit.com/adafruit-feather-m0-basic-proto/using-with-arduino-ide)
-
-# Links
-
-- [Use Cases](https://www.thethingsnetwork.org/forum/c/use-cases)
-- [Adafruit Feather Docs](https://learn.adafruit.com/assets/46254)
-- [LoRaWAN White paper](https://arxiv.org/pdf/1706.03086.pdf)
-
-<!-- pick the relevant ones from below -->
-# Learn more
-* **IoT Patterns**: Enjoyed this Code Pattern? Check out our other [IoT Patterns](https://developer.ibm.com/code/technologies/iot/)
 
 # License
 [Apache 2.0](LICENSE)
