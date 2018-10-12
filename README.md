@@ -10,9 +10,7 @@ To set up this project, several pieces of hardware will need to be acquired whic
 3. -->
 
 # Architecture
-<p align="center">
-<img src="https://i.imgur.com/Zu8113o.png"  />
-</p>
+![](img/arch.png)
 
 <!-- # Flow
 1. LoRaWAN end nodes power on, sample values from sensors, and send data to Gateway. This process is repeated at a interval set by the user
