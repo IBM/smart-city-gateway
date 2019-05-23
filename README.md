@@ -1,9 +1,5 @@
 # Create a LoRaWAN based Smart City network
 
-# WARNING: This repository is no longer maintained :warning:
-
-> This repository will not be updated. The repository will be kept available in read-only mode. See https://developer.ibm.com/patterns/ for the latest code patterns.
-
 LoRaWAN is a wireless communication protocol designed for the Internet of Things. This protocol is desirable for IoT solutions because it has a long range (up to 10km in optimal conditions) and requires a minimal amount of battery power. This longer range allows for the deployment of larger scale projects, such as smart parking structures, agricultural monitoring, tracking weather conditions, asset tracking, etc.
 
 Each LoRa network consists of a "gateway", and one or more "nodes". This network uses a star based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to a IoT platform for further processing.
