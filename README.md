@@ -2,7 +2,7 @@
 
 LoRaWAN is a wireless communication protocol designed for the Internet of Things. This protocol is desirable for IoT solutions because it has a long range (up to 10km in optimal conditions) and requires a minimal amount of battery power. This longer range allows for the deployment of larger scale projects, such as smart parking structures, agricultural monitoring, tracking weather conditions, asset tracking, etc.
 
-Each LoRa network consists of a "gateway", and one or more "nodes". This network uses a star based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to a IoT platform for further processing.
+Each LoRa network consists of a "gateway", and one or more "nodes". This network uses a star-based topology, in which each node communicates directly with the gateway. Data can be sent and received through each gateway/node connection. As data is received by the gateway, the gateway can then convert the data to a readable format and send it up to an IoT platform for further processing.
 
 To set up this project, several pieces of hardware will need to be acquired which are listed below in the [prerequisites](#hardware) section.
 <!-- 1. Assemble hardware and configure software to create a LoRaWAN based gateway, which can wirelessly receive sensor data from one or more end nodes. This gateway can forward data to
@@ -108,7 +108,7 @@ Next install git, if you haven't already
 apt-get install -y git-core
 ```
 
-Next we'll fetch the "packet forwarder" project. This project allows us to compile a binary program that'll allow our Raspberry Pi to listen for incoming LoRa packets, and forward them to a Cloud application.
+Next, we'll fetch the "packet forwarder" project. This project allows us to compile a binary program that'll allow our Raspberry Pi to listen for incoming LoRa packets, and forward them to a Cloud application.
 First, clone the project
 ```
 git clone https://github.com/Lora-net/packet_forwarder
@@ -134,8 +134,7 @@ Next, we'll need to update a few values in the `global_conf.json` file.
 
 ## Create an account on The Things Network (TTN) and register the gateway.
 
-Create a free account on The Things Network console at [https://console.thethingsnetwork.org/
- at [https://console.thethingsnetwork.org/](https://console.thethingsnetwork.org/) and creating a free account.
+Create a free account on The Things Network console at https://console.thethingsnetwork.org/
 
 Next, log in and navigate to the "Gateways" section. Next, click the "Register Gateway" link.
 
@@ -196,11 +195,11 @@ Click the generated device. This view displays the Network Session Key and App S
 ## Set up the Adafruit LoRa Feature M0 as the end point and install software dependencies
 
 **End Node Hardware**
-We can continue on by setting up a end node, which is responsible for reading sensor data and forwarding the packaged data to the gateway.
+We can continue on by setting up an end node, which is responsible for reading sensor data and forwarding the packaged data to the gateway.
 
 In this context, each end node consists of a microprocessor, a LoRa radio, an antenna, and one or more sensors.
 
-We opted to use a Adafruit LoRa Feather M0, which is a microcontroller that includes a LoRa radio, Cortex M0 processor, and a USB/battery port.
+We opted to use an Adafruit LoRa Feather M0, which is a microcontroller that includes a LoRa radio, Cortex M0 processor, and a USB/battery port.
 
 First, solder the included male headers to both sides of the LoRa Feather.
 <!-- <TODO, add pic> -->
@@ -278,7 +277,7 @@ Select the cloned `arduino-lmic` folder and then click the "Choose" button
 </p>
 
 
-Next, we'll need to take the Device credentials (Network Session Key and App Session Key) and place them into a Arduino "sketch". A sketch is a C code snippet that runs in a loop on the node. This snippet defines node behavior, and can place the node in "deep sleep" mode at a given interval, define input/output pins to read and write to sensors, listen for updates from the gateway, etc.
+Next, we'll need to take the Device credentials (Network Session Key and App Session Key) and place them into an Arduino "sketch". A sketch is a C code snippet that runs in a loop on the node. This snippet defines node behavior, and can place the node in "deep sleep" mode at a given interval, define input/output pins to read and write to sensors, listen for updates from the gateway, etc.
 
 In this example, we'll use the sketch included in our cloned arduino-lmic repository at `arduino-lmic/examples/ttn-abp/ttn-abp.ino`. This sketch repeatedly transmits a string "Hello World" to a nearby LoRa gateway. The Network Session key should be inserted as a value to the NWSKEY variable, and the Application Key set as the APPSKEY variable, as seen below
 <p align="center">
@@ -336,7 +335,7 @@ After verifying that the sensor was able to successfully detect sound levels, th
 
 Since this particular sound sensor has low precision unsigned values (constrained range from 0 to 255), we can fit each value in a single byte. To do this, we’ve adjusted the `do_send` method on line 136 of the [ttn-abp-sensor.ino](sketches/ttn-abp-sensor.ino#136) sketch to initialize a byte array, run through a "for" loop and append sensor values to the array during each iteration. We've set the sampling interval to measure the sensor level once every second, and append the average sound level to the byte array. Once the byte array is the maximum permitted size (52 bytes), it will be published to the gateway
 
-After flashing the updated sketch to the board, we can see a different set of incoming values in the TTN console, which takes the form of hex values. So now we’re able to publish sensor values at periodic intervals to a internet-connected service. And to access the data without going through a web application, we can use a MQTT client to subscribe to all incoming values published to our TTN account. For example, we can use the Node.js MQTT client cli like so.
+After flashing the updated sketch to the board, we can see a different set of incoming values in the TTN console, which takes the form of hex values. So now we’re able to publish sensor values at periodic intervals to an internet-connected service. And to access the data without going through a web application, we can use a MQTT client to subscribe to all incoming values published to our TTN account. For example, we can use the Node.js MQTT client cli like so.
 
 `mqtt_sub -h us-west.thethings.network -p 1883 -u "${TTN_APPLICATION}" -t "${TTN_APPLICATION}/devices/${TTN_DEVICE}/up" -P "${TTN_ACCESS_KEY}"`
 
@@ -357,7 +356,7 @@ First, you’ll need to provision a Watson IoT service [here](https://console.bl
 
 Also, create a set of MQTT credentials that can be used to publish sensor data to the platform with the following steps
 
-Enter the IoT Platform dashboard, select "Devices" from the left hand menu, and then click the "Add Device" button
+Enter the IoT Platform dashboard, select "Devices" from the left-hand menu, and then click the "Add Device" button
 <p align="center">
 <img src="https://i.imgur.com/fec24FG.png"  data-canonical-src="https://i.imgur.com/fec24FG.png">
 </p>
